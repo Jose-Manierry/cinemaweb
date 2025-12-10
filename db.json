@@ -1,0 +1,49 @@
+{
+  "filmes": [
+    {
+      "id": "b682",
+      "titulo": "Bastardos Inglórios",
+      "genero": "Ação",
+      "duracao": 200,
+      "classificacao": 18,
+      "descricao": "Descrição do Filme",
+      "imagem": "https://br.web.img2.acsta.net/medias/nmedia/18/90/43/36/20096333.jpg"
+    },
+    {
+      "id": "0a55",
+      "titulo": "Avatar: O Caminho da Água",
+      "genero": "Ação",
+      "duracao": 260,
+      "classificacao": 18,
+      "descricao": "Descrição do filme do Avatar",
+      "imagem": "https://lumiere-a.akamaihd.net/v1/images/poster-avatar-2-bra_96b8c77c.png"
+    }
+  ],
+  "salas": [
+    {
+      "nome": "Sala 36",
+      "capacidade": 120,
+      "id": "1"
+    },
+    {
+      "nome": "Sala 2",
+      "capacidade": 80,
+      "id": "2"
+    },
+    {
+      "id": "7d70",
+      "nome": "sala 3",
+      "capacidade": 100
+    }
+  ],
+  "sessoes": [],
+  "ingressos": [
+    {
+      "id": "1",
+      "sessaoId": 1,
+      "nomeCliente": "João",
+      "assento": "A10",
+      "valor": 25
+    }
+  ]
+}
