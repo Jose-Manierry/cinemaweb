@@ -36,7 +36,22 @@
       "capacidade": 100
     }
   ],
-  "sessoes": [],
+  "sessoes": [
+    {
+      "id": "c5da",
+      "filmeId": "b682",
+      "salaId": "1",
+      "precoIngresso": 30,
+      "dataHora": "2025-12-21T01:22:00.000Z"
+    },
+    {
+      "id": "eba7",
+      "filmeId": "0a55",
+      "salaId": "2",
+      "precoIngresso": 30,
+      "dataHora": "2025-12-23T01:22:00.000Z"
+    }
+  ],
   "ingressos": [
     {
       "id": "1",

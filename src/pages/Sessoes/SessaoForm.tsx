@@ -53,11 +53,18 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
 
     const onSubmit = async (data: SessaoFormData) => {
         try {
-            // A conversão de string para número acontece aqui, se necessário no backend
+            // CONVERSÃO DA DATA PARA O FORMATO UTC (ISO 8601)
+            // O input 'datetime-local' gera uma string como '2024-08-15T14:30'.
+            // new Date() interpreta isso no fuso horário local do navegador.
+            // .toISOString() converte para uma string UTC, que é o padrão para APIs.
+            const dataHoraUTC = new Date(data.dataHora).toISOString();
+
             const payload = {
                 ...data,
+                dataHora: dataHoraUTC, // Envia a data em formato UTC
                 precoIngresso: Number(data.precoIngresso),
             };
+
             await sessoesService.create(payload);
             alert('Sessão agendada com sucesso!');
             reset(); // Limpa o formulário

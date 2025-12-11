@@ -10,7 +10,7 @@ export const SessaoSchema = z.object({
   precoIngresso: z.number().positive('O preço do ingresso deve ser positivo.'),
 
   // Regra 2: A data da sessão não pode ser retroativa (anterior à data atual).
-  dataHora: z.string().datetime({ message: 'Data e hora inválidas.' })
+  dataHora: z.string().min(1, 'A data é obrigatória.')
     .refine((dataString) => {
       const dataSessao = new Date(dataString);
       const dataAtual = new Date();
