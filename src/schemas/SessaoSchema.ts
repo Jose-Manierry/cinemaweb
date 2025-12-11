@@ -3,8 +3,8 @@ import { z } from 'zod';
 
 export const SessaoSchema = z.object({
   // Regra 1: Não permitir criar sessão sem selecionar um Filme e uma Sala.
-  filmeId: z.number().int().positive('O Filme deve ser selecionado.'),
-  salaId: z.number().int().positive('A Sala deve ser selecionada.'),
+  filmeId: z.string().min(1,'O Filme deve ser selecionado.'),
+  salaId: z.string().min(1, 'A Sala deve ser selecionada.'),
   
   // O valor do ingresso pode ser fixo ou validado.
   precoIngresso: z.number().positive('O preço do ingresso deve ser positivo.'),

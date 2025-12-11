@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SessaoSchema, SessaoFormData } from '../../schemas/SessaoSchema';
+import { SessaoSchema, type SessaoFormData } from '../../schemas/SessaoSchema';
 import { sessoesService } from '../../services/sessoesService';
 import { filmesService } from '../../services/filmesService';
 import { salasService } from '../../services/salasService'; // Supondo que você criou este serviço
-import { Filme } from '../../models/Filme.model';
-import { Sala } from '../../models/Sala.model'; // Supondo que você criou este model
+import type { Filme } from '../../models/Filme.model';
+import type { Sala } from '../../models/Sala.model';
 
 interface SessaoFormProps {
     onSessionCreated: () => void;
@@ -26,8 +26,8 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
     } = useForm<SessaoFormData>({
         resolver: zodResolver(SessaoSchema),
         defaultValues: {
-            filmeId: 0,
-            salaId: 0,
+            filmeId: '',
+            salaId: '',
             dataHora: '',
             precoIngresso: 30.00, // Valor inicial
         },
@@ -37,8 +37,8 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
     useEffect(() => {
         const loadDependencies = async () => {
             try {
-                const loadedFilmes = await filmesService.getAll();
-                const loadedSalas = await salasService.getAll();
+                const loadedFilmes = await filmesService.listar();
+                const loadedSalas = await salasService.listar();
                 setFilmes(loadedFilmes);
                 setSalas(loadedSalas);
             } catch (error) {
@@ -53,7 +53,12 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
 
     const onSubmit = async (data: SessaoFormData) => {
         try {
-            await sessoesService.create(data);
+            // A conversão de string para número acontece aqui, se necessário no backend
+            const payload = {
+                ...data,
+                precoIngresso: Number(data.precoIngresso),
+            };
+            await sessoesService.create(payload);
             alert('Sessão agendada com sucesso!');
             reset(); // Limpa o formulário
             onSessionCreated(); // Informa ao componente pai para atualizar a lista
@@ -78,9 +83,9 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
                 <select 
                     className={`form-select ${getFeedbackClass('filmeId')}`} 
                     id="filmeId" 
-                    {...register('filmeId', { valueAsNumber: true })}
+                    {...register('filmeId')}
                 >
-                    <option value={0}>Selecione um Filme</option>
+                    <option value="">Selecione um Filme</option>
                     {filmes.map(filme => (
                         <option key={filme.id} value={filme.id}>{filme.titulo}</option>
                     ))}
@@ -94,11 +99,11 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
                 <select 
                     className={`form-select ${getFeedbackClass('salaId')}`} 
                     id="salaId" 
-                    {...register('salaId', { valueAsNumber: true })}
+                    {...register('salaId')}
                 >
-                    <option value={0}>Selecione uma Sala</option>
+                    <option value="">Selecione uma Sala</option>
                     {salas.map(sala => (
-                        <option key={sala.id} value={sala.id}>Sala {sala.numeroSala} (Cap: {sala.capacidadeMax})</option>
+                        <option key={sala.id} value={sala.id}>{sala.nome} (Cap: {sala.capacidade})</option>
                     ))}
                 </select>
                 <div className="invalid-feedback">{getErrorMessage('salaId')}</div>

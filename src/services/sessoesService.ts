@@ -1,6 +1,6 @@
 // src/services/sessoesService.ts
-import api from './api';
-import { Sessao, SessaoPayload } from '../models/Sessao.model';
+import {api} from './api';
+import type { Sessao, SessaoPayload } from '../models/Sessao.model';
 
 const BASE_URL = '/sessoes';
 
@@ -20,7 +20,7 @@ export const sessoesService = {
   },
   
   // (Opcional) DELETE: Excluir sessão
-  delete: async (id: number): Promise<void> => {
+  delete: async (id: string): Promise<void> => {
     await api.delete(`${BASE_URL}/${id}`);
   },
 };

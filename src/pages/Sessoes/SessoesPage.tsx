@@ -1,81 +1,69 @@
-import { useEffect, useState } from "react";
-import SessaoCard from "./SessaoCard";
-import { sessoesService } from "../../services/sessoesService";
-import { filmesService } from "../../services/filmesService";
-import { salasService } from "../../services/salasService";
-import { type Sessao } from "../../schemas/SessaoSchema";
-import { type Filme } from "../../schemas/FilmeSchema";
-import { type Sala } from "../../schemas/SalaSchema";
-import { Link } from "react-router-dom";
+// src/pages/Sessoes/SessoesPage.tsx
+import React, { useState, useEffect, useCallback } from 'react';
+import SessaoForm from './SessaoForm';
+import SessoesList, { type SessaoExpanded } from './SessoesList';
+import { sessoesService } from '../../services/sessoesService';
 
-type SessaoDisplay = {
-  id: number;
-  filme: Filme;
-  sala: Sala;
-  horario: string;
-};
+const SessoesPage: React.FC = () => {
+    const [sessoes, setSessoes] = useState<SessaoExpanded[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-export default function SessoesPage() {
-  const [sessoes, setSessoes] = useState<SessaoDisplay[]>([]);
+    const loadSessoes = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await sessoesService.getAll();
+            // A API com _expand pode não retornar o objeto se o ID for inválido
+            // O ideal é garantir a integridade dos dados no backend
+            setSessoes(data);
+        } catch (e) {
+            console.error(e);
+            setError('Erro ao carregar a lista de sessões.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-  useEffect(() => {
-    const carregarSessoes = async () => {
-      const [sessoesData, filmesData, salasData] = await Promise.all([
-        sessoesService.listar(),
-        filmesService.listar(),
-        salasService.listar(),
-      ]);
+    useEffect(() => {
+        loadSessoes();
+    }, [loadSessoes]);
 
-      const sessoesDisplayData = sessoesData.map((sessao: Sessao) => {
-        const filme =
-          filmesData.find((f: Filme) => f.id === sessao.filmeId) ?? {
-            id: 0,
-            titulo: "Filme não encontrado",
-            genero: "",
-            duracao: 0,
-            classificacao: "",
-            imagem: "",
-          };
-
-        const sala =
-          salasData.find((s: Sala) => s.id === sessao.salaId) ?? {
-            id: 0,
-            nome: "Sala não encontrada",
-            capacidade: 0,
-          };
-
-        return {
-          id: sessao.id!,
-          filme: filme,
-          sala: sala,
-          horario: new Date(sessao.horario).toLocaleString(),
-        };
-      });
-
-      setSessoes(sessoesDisplayData);
+    const handleSessionCreated = () => {
+        // Simplesmente recarrega a lista para exibir a nova sessão
+        loadSessoes();
     };
 
-    carregarSessoes();
-  }, []);
+    const handleDeleteSession = async (id: string) => {
+        if (window.confirm('Tem certeza que deseja excluir esta sessão?')) {
+            try {
+                await sessoesService.delete(id);
+                // Recarrega a lista para refletir a exclusão
+                loadSessoes();
+                alert('Sessão excluída com sucesso!');
+            } catch (error) {
+                console.error('Erro ao excluir sessão:', error);
+                alert('Ocorreu um erro ao excluir a sessão.');
+            }
+        }
+    };
 
-  return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <h1>Sessões</h1>
+    return (
+        <div className="container mt-4">
+            <div className="card">
+                <div className="card-body">
+                    <SessaoForm onSessionCreated={handleSessionCreated} />
+                </div>
+            </div>
 
-        <Link to="/sessoes/novo" className="btn btn-primary">
-          Nova Sessão
-        </Link>
-      </div>
+            <SessoesList 
+                sessoes={sessoes}
+                loading={loading}
+                error={error}
+                onDelete={handleDeleteSession}
+            />
+        </div>
+    );
+};
 
-      {sessoes.map((s) => (
-        <SessaoCard
-          key={s.id}
-          filme={s.filme}
-          sala={s.sala}
-          horario={s.horario}
-        />
-      ))}
-    </div>
-  );
-}
+export default SessoesPage;
