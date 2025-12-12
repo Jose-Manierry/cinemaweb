@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SessaoSchema, type SessaoFormData } from '../../schemas/SessaoSchema';
 import { sessoesService } from '../../services/sessoesService';
 import { filmesService } from '../../services/filmesService';
-import { salasService } from '../../services/salasService'; // Supondo que você criou este serviço
+import { salasService } from '../../services/salasService';
 import type { Filme } from '../../models/Filme.model';
 import type { Sala } from '../../models/Sala.model';
 
@@ -53,10 +53,7 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ onSessionCreated }) => {
 
     const onSubmit = async (data: SessaoFormData) => {
         try {
-            // CONVERSÃO DA DATA PARA O FORMATO UTC (ISO 8601)
-            // O input 'datetime-local' gera uma string como '2024-08-15T14:30'.
-            // new Date() interpreta isso no fuso horário local do navegador.
-            // .toISOString() converte para uma string UTC, que é o padrão para APIs.
+
             const dataHoraUTC = new Date(data.dataHora).toISOString();
 
             const payload = {

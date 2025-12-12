@@ -1,4 +1,3 @@
-// src/schemas/SessaoSchema.ts
 import { z } from 'zod';
 
 export const SessaoSchema = z.object({

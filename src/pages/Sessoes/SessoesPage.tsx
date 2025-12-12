@@ -1,11 +1,12 @@
 // src/pages/Sessoes/SessoesPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import SessaoForm from './SessaoForm';
-import SessoesList, { type SessaoExpanded } from './SessoesList';
+import SessoesList from './SessoesList';
 import { sessoesService } from '../../services/sessoesService';
+import type { Sessao } from '../../models/Sessao.model';
 
 const SessoesPage: React.FC = () => {
-    const [sessoes, setSessoes] = useState<SessaoExpanded[]>([]);
+    const [sessoes, setSessoes] = useState<Sessao[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -14,8 +15,6 @@ const SessoesPage: React.FC = () => {
         setError(null);
         try {
             const data = await sessoesService.getAll();
-            // A API com _expand pode não retornar o objeto se o ID for inválido
-            // O ideal é garantir a integridade dos dados no backend
             setSessoes(data);
         } catch (e) {
             console.error(e);

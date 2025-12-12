@@ -1,20 +1,12 @@
 // src/pages/Sessoes/SessoesList.tsx
 import React from 'react';
 import type { Sessao } from '../../models/Sessao.model';
-import type { Filme } from '../../models/Filme.model';
-import type { Sala } from '../../models/Sala.model';
-
-// Interface estendida para a visualização com dados completos
-export interface SessaoExpanded extends Sessao {
-  filme?: Filme; 
-  sala?: Sala;
-}
 
 interface SessoesListProps {
-  sessoes: SessaoExpanded[];
+  sessoes: Sessao[]; // Usando o tipo Sessao diretamente, que já inclui os campos opcionais.
   loading: boolean;
   error: string | null;
-  onDelete: (id: string) => void; // Adicionando a função de delete
+  onDelete: (id: string) => void;
 }
 
 const SessoesList: React.FC<SessoesListProps> = ({ sessoes, loading, error, onDelete }) => {
@@ -39,8 +31,13 @@ const SessoesList: React.FC<SessoesListProps> = ({ sessoes, loading, error, onDe
           <tbody>
             {sessoes.map(sessao => (
               <tr key={sessao.id}>
-                <td>{sessao.filme ? sessao.filme.titulo : 'N/A'}</td>
-                <td>{sessao.sala ? sessao.sala.nome : 'N/A'}</td>
+                {/* 
+                  Verifica se 'sessao.filme' existe. Se sim, exibe o título.
+                  Caso contrário, mostra um texto indicando que a informação não está disponível.
+                  Isso é essencial para evitar erros caso a API não retorne o objeto aninhado.
+                */}
+                <td>{sessao.filme ? sessao.filme.titulo : 'Informação indisponível'}</td>
+                <td>{sessao.sala ? sessao.sala.nome : 'Informação indisponível'}</td>
                 <td>{new Date(sessao.dataHora).toLocaleString('pt-BR')}</td>
                 <td>R$ {sessao.precoIngresso.toFixed(2)}</td>
                 <td>
